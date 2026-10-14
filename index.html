@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파이썬 자료형 탐정단</title>
+    <!-- Pretendard Font for Clean Korean Typography -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                        mono: ['Consolas', 'Monaco', 'Courier New', 'monospace']
+                    },
+                    colors: {
+                        candy: {
+                            pink: '#FF85A1',
+                            lightpink: '#FFE5EC',
+                            yellow: '#FFD166',
+                            lightyellow: '#FFF3BF',
+                            green: '#06D6A0',
+                            lightgreen: '#D8F3DC',
+                            blue: '#4EA8DE',
+                            lightblue: '#E0F2FE',
+                            purple: '#9B5DE5',
+                            lightpurple: '#F3E8FF',
+                            orange: '#FF9F1C',
+                            bg: '#FAF8FF'
+                        }
+                    },
+                    boxShadow: {
+                        'pop': '0 8px 0px 0px rgba(0,0,0,0.08)',
+                        'pop-sm': '0 4px 0px 0px rgba(0,0,0,0.06)',
+                        'pop-hover': '0 10px 0px 0px rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF8FF;
+            font-family: 'Pretendard', sans-serif;
+            user-select: none;
+        }
+        /* Custom Keyframe Animations for Cheerful Interactions */
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-short {
+            animation: bounce-short 0.6s ease-in-out;
+        }
+        @keyframes pop-in {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop-in {
+            animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-3 sm:p-6 text-gray-800">
+
+    <div class="max-w-2xl mx-auto w-full flex-1 flex flex-col justify-center">
+        
+        <!-- Main Card Header -->
+        <header class="bg-white rounded-3xl p-5 mb-5 shadow-pop border-4 border-candy-purple/30 relative overflow-hidden">
+            <div class="absolute -top-6 -right-6 w-20 h-20 bg-candy-yellow/40 rounded-full blur-xl"></div>
+            <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-candy-pink/30 rounded-full blur-xl"></div>
+            
+            <div class="flex items-center justify-between mb-3 relative z-10">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-candy-lightpurple text-candy-purple border border-candy-purple/30">
+                    🔍 중학 정보 - 파이썬
+                </span>
+                <span id="score-badge" class="font-bold text-sm bg-candy-lightyellow text-candy-orange px-3 py-1 rounded-full border border-candy-yellow">
+                    ⭐ 점수: 0점
+                </span>
+            </div>
+            
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-800 text-center tracking-tight my-1">
+                🧩 파이썬 <span class="text-candy-purple">자료형</span> 탐정단
+            </h1>
+            <p class="text-xs sm:text-sm text-gray-500 text-center font-medium">
+                코드 속에 숨겨진 진짜 속마음(자료형)을 밝혀라!
+            </p>
+
+            <!-- Progress Bar -->
+            <div class="mt-4 bg-gray-100 h-3.5 rounded-full overflow-hidden p-0.5 border border-gray-200">
+                <div id="progress-bar" class="bg-gradient-to-r from-candy-pink via-candy-yellow to-candy-green h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between items-center mt-1.5 px-1 text-xs font-bold text-gray-400">
+                <span id="progress-text">문제 1 / 4</span>
+                <span id="progress-percent">0%</span>
+            </div>
+        </header>
+
+        <!-- Quiz Screen (Active Area) -->
+        <main id="quiz-container" class="bg-white rounded-3xl p-5 sm:p-7 shadow-pop border-4 border-candy-blue/30 relative">
+            
+            <!-- Question Box -->
+            <div class="mb-5">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-7 h-7 flex items-center justify-center bg-candy-blue text-white rounded-xl text-sm font-black shadow-sm" id="q-number">1</span>
+                    <h2 id="q-title" class="text-base sm:text-lg font-bold text-gray-800 leading-snug">
+                        질문이 들어가는 자리입니다.
+                    </h2>
+                </div>
+                
+                <!-- Code Snippet Box (If present) -->
+                <div id="code-box" class="mt-3 p-4 bg-slate-900 rounded-2xl text-candy-green font-mono text-sm sm:text-base border-2 border-slate-700 shadow-inner overflow-x-auto relative hidden">
+                    <div class="absolute top-2 right-3 text-xs text-slate-500 font-sans">Python 3</div>
+                    <pre id="code-content" class="whitespace-pre-wrap">print("Hello World")</pre>
+                </div>
+            </div>
+
+            <!-- Choices Grid -->
+            <div id="choices-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
+                <!-- Choice buttons generated dynamically -->
+            </div>
+
+            <!-- Feedback Overlay (Slide-up or Appears below) -->
+            <div id="feedback-card" class="mt-5 p-5 rounded-2xl border-2 hidden animate-pop-in">
+                <div class="flex items-center gap-3 mb-3">
+                    <span id="feedback-icon" class="text-3xl">🎉</span>
+                    <div>
+                        <h3 id="feedback-status" class="text-lg font-extrabold">정답입니다!</h3>
+                        <p id="feedback-sub text-xs text-gray-600">아래의 탐정 해설표를 읽고 다음 문제로 넘어가세요.</p>
+                    </div>
+                </div>
+
+                <!-- Comprehensive Explanation Table -->
+                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white mb-4 text-xs sm:text-sm">
+                    <table class="w-full text-left border-collapse">
+                        <tbody>
+                            <tr class="border-b border-gray-100 bg-candy-lightpurple/40">
+                                <th class="p-2.5 font-bold text-candy-purple w-24">선택한 보기</th>
+                                <td id="tbl-choice" class="p-2.5 font-bold text-gray-800">① 10</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-white">
+                                <th class="p-2.5 font-bold text-gray-500">학생의 생각</th>
+                                <td id="tbl-thought" class="p-2.5 text-gray-600 leading-relaxed">숫자 5와 5를 더했으니 당연히 10이라고 생각했어요.</td>
+                            </tr>
+                            <tr class="bg-candy-lightblue/30">
+                                <th class="p-2.5 font-bold text-candy-blue">바로잡기</th>
+                                <td id="tbl-correct" class="p-2.5 text-gray-700 font-medium leading-relaxed">따옴표("")로 감싸진 값은 숫자가 아니라 문자열(str)입니다!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button id="next-btn" class="w-full py-3 px-4 bg-candy-purple hover:bg-purple-600 text-white font-bold rounded-2xl shadow-pop-sm transition duration-150 active:translate-y-1">
+                    다음 문제로 이동 ➔
+                </button>
+            </div>
+        </main>
+
+        <!-- Result Screen (Hidden by default) -->
+        <main id="result-container" class="bg-white rounded-3xl p-6 sm:p-8 shadow-pop border-4 border-candy-pink/30 text-center hidden animate-pop-in">
+            <div class="text-5xl mb-3">🏆</div>
+            <h2 class="text-2xl sm:text-3xl font-black text-gray-800 mb-2">탐정 미션 완료!</h2>
+            <p class="text-sm text-gray-500 mb-6">파이썬 자료형 검증이 모두 끝났습니다.</p>
+
+            <!-- Score Display -->
+            <div class="bg-candy-lightpink/50 rounded-2xl p-5 mb-6 border-2 border-candy-pink/30 inline-block w-full max-w-sm">
+                <span class="text-xs font-bold text-candy-pink uppercase tracking-widest block mb-1">최종 탐정 점수</span>
+                <span id="final-score" class="text-4xl sm:text-5xl font-black text-candy-pink">100점</span>
+            </div>
+
+            <!-- Misconception Diagnostic Card -->
+            <div class="bg-gray-50 rounded-2xl p-4 sm:p-5 text-left border border-gray-200 mb-6">
+                <h3 class="font-bold text-gray-800 text-sm sm:text-base mb-2 flex items-center gap-2">
+                    <span>💡</span> 탐정 보고서: 나의 오개념 진단
+                </h3>
+                <p id="diagnostic-text" class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                    모든 문제를 완벽하게 맞혔습니다! 파이썬의 기본 자료형 특징과 연산 원리를 정확하게 이해하고 계시네요.
+                </p>
+            </div>
+
+            <button onclick="restartQuiz()" class="w-full py-3.5 bg-candy-green hover:bg-emerald-500 text-white font-black text-base rounded-2xl shadow-pop-sm transition duration-150 active:translate-y-1">
+                🔄 다시 도전하기
+            </button>
+        </main>
+    </div>
+
+    <!-- Simple Footer -->
+    <footer class="text-center text-xs text-gray-400 mt-6 font-medium">
+        중학교 정보 수업 · 파이썬 자료형(Data Types) 가상 오개념 클리닉
+    </footer>
+
+    <script>
+        // Quiz Data - Fully validated curriculum content with student misconceptions
+        const quizData = [
+            {
+                id: 1,
+                question: '다음 코드를 실행했을 때 화면에 출력되는 결과로 알맞은 것은?',
+                code: 'print("5" + "5")',
+                choices: [
+                    { id: 1, text: '10', isCorrect: false, thought: '숫자 5와 5를 더했으니 당연히 수학처럼 10이 나올 거라 생각했어요.', fix: '따옴표("")로 감싸진 값은 숫자가 아닌 문자열(str)입니다. 문자열 끼리의 + 연산은 두 문자를 이어 붙이는 역할을 하므로 "55"가 됩니다.' },
+                    { id: 2, text: '55', isCorrect: true, thought: '따옴표가 있는 문자열 두 개를 + 연산자로 이어 붙였다고 바르게 판단했어요!', fix: '정답입니다! "5"와 "5"는 문자열이므로 연결되어 "55"가 됩니다.' },
+                    { id: 3, text: '5 + 5', isCorrect: false, thought: 'print 안의 따옴표 식이 문자 그대로 출력될 거라 생각했어요.', fix: '따옴표 안의 문자는 하나하나가 글자입니다. "5" + "5"는 문자 "5" 두 개를 연결하는 연산을 실행합니다.' },
+                    { id: 4, text: '에러(Error) 발생', isCorrect: false, thought: '문자끼리는 덧셈 기호를 사용할 수 없어서 에러가 날 거라 생각했어요.', fix: '파이썬에서 문자열(str)과 문자열(str) 사이의 + 연산은 완벽히 정상적인 문법입니다.' }
+                ]
+            },
+            {
+                id: 2,
+                question: '다음 중 파이썬에서 정수(int) 자료형으로 정확히 분류되는 것은?',
+                code: null,
+                choices: [
+                    { id: 1, text: '3.0', isCorrect: false, thought: '3.0은 수학에서 정수 3과 값이 같으니까 정수(int)라고 생각했어요.', fix: '값의 크기와 상관없이 소수점(.)이 들어간 숫자는 파이썬에서 실수(float)로 분류됩니다.' },
+                    { id: 2, text: '"100"', isCorrect: false, thought: '안에 들어있는 내용이 숫자 100이니까 정수(int)라고 생각했어요.', fix: '아무리 숫자 형태라도 큰따옴표("")나 작은따옴표(\'\')로 감싸면 문자열(str)이 됩니다.' },
+                    { id: 3, text: 'True', isCorrect: false, thought: '따옴표가 없어서 정수나 변수 이름 중 하나라고 생각했어요.', fix: 'True와 False는 참/거짓을 나타내는 불리언(bool) 자료형입니다.' },
+                    { id: 4, text: '42', isCorrect: true, thought: '소수점도 없고 따옴표도 없는 온전한 양의 정수라고 바르게 판단했어요!', fix: '정답입니다! 소수점이나 따옴표가 없는 온전한 숫자가 바로 정수(int)입니다.' }
+                ]
+            },
+            {
+                id: 3,
+                question: '다음 코드에서 type(is_pass)를 실행했을 때 출력되는 자료형은?',
+                code: 'is_pass = True',
+                choices: [
+                    { id: 1, text: "<class 'bool'>", isCorrect: true, thought: 'True가 참/거짓을 나타내는 불리언(bool) 타입임을 정확히 파악했어요!', fix: '정답입니다! True와 False는 파이썬에서 참과 거짓을 뜻하는 bool 자료형입니다.' },
+                    { id: 2, text: "<class 'str'>", isCorrect: false, thought: 'True가 영어 단어 글자니까 문자열(str)이라고 생각했어요.', fix: '따옴표가 없는 True는 단순 글자가 아니라 파이썬이 미리 정해둔 불리언(bool) 값입니다. (문자열이 되려면 "True"여야 합니다.)' },
+                    { id: 3, text: "<class 'int'>", isCorrect: false, thought: '컴퓨터 내부에서 참을 1로 처리하니까 정수(int)라고 생각했어요.', fix: '논리적으로 1의 의미를 갖기도 하지만, 파이썬에서 이 자체의 공식 자료형은 bool입니다.' },
+                    { id: 4, text: "<class 'float'>", isCorrect: false, thought: '자료형의 한 종류 같아서 임의로 선택했어요.', fix: 'float는 소수점이 있는 실수 자료형입니다.' }
+                ]
+            },
+            {
+                id: 4,
+                question: '다음 코드를 실행했을 때 화면에 출력되는 결과로 알맞은 것은?',
+                code: 'print("안녕" * 3)',
+                choices: [
+                    { id: 1, text: '에러(Error) 발생', isCorrect: false, thought: '문자에 숫자를 곱하는 것은 수학적으로 불가능해서 에러가 날 거라 생각했어요.', fix: '파이썬에서는 문자열에 정수를 곱하는 연산을 지원합니다!' },
+                    { id: 2, text: '안녕안녕안녕', isCorrect: true, thought: '문자열과 숫자의 곱셈은 문자열을 반복 출력한다는 원리를 정확히 알았어요!', fix: '정답입니다! 문자열 * 숫자 연산은 그 문자열을 숫자만큼 반복해서 붙여줍니다.' },
+                    { id: 3, text: '안녕3', isCorrect: false, thought: '문자 뒤에 숫자 3이 그냥 찰싹 붙을 거라 생각했어요.', fix: '문자 뒤에 숫자를 글자로 붙이고 싶다면 "안녕" + "3" 형태로 적어야 합니다.' },
+                    { id: 4, text: '안녕 * 3', isCorrect: false, thought: '따옴표 안의 문자와 식이 그대로 계산되지 않고 출력될 거라 생각했어요.', fix: 'print() 안에서 따옴표 밖에 있는 연산식은 파이썬이 계산을 완료한 후 결과만 출력합니다.' }
+                ]
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let wrongTags = [];
+        let isAnswered = false;
+
+        // Choice Card Styling Colors Array (Colorful Pastel Theme)
+        const choiceColors = [
+            { bg: 'bg-candy-lightpink/40', border: 'border-candy-pink', hover: 'hover:bg-candy-lightpink', text: 'text-candy-pink' },
+            { bg: 'bg-candy-lightyellow/50', border: 'border-candy-yellow', hover: 'hover:bg-candy-lightyellow', text: 'text-candy-orange' },
+            { bg: 'bg-candy-lightgreen/40', border: 'border-candy-green', hover: 'hover:bg-candy-lightgreen', text: 'text-emerald-600' },
+            { bg: 'bg-candy-lightblue/40', border: 'border-candy-blue', hover: 'hover:bg-candy-lightblue', text: 'text-candy-blue' }
+        ];
+
+        function loadQuestion() {
+            isAnswered = false;
+            const q = quizData[currentIdx];
+
+            // Progress Bar
+            const percent = Math.round((currentIdx / quizData.length) * 100);
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+            document.getElementById('progress-text').innerText = `문제 ${currentIdx + 1} / ${quizData.length}`;
+            document.getElementById('progress-percent').innerText = `${percent}%`;
+
+            // Question Header
+            document.getElementById('q-number').innerText = q.id;
+            document.getElementById('q-title').innerText = q.question;
+
+            // Code Snippet Box
+            const codeBox = document.getElementById('code-box');
+            if (q.code) {
+                document.getElementById('code-content').innerText = q.code;
+                codeBox.classList.remove('hidden');
+            } else {
+                codeBox.classList.add('hidden');
+            }
+
+            // Render Choices
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+
+            q.choices.forEach((choice, idx) => {
+                const colorStyle = choiceColors[idx % choiceColors.length];
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 transform active:scale-95 flex items-start gap-3 ${colorStyle.bg} ${colorStyle.border} ${colorStyle.hover} shadow-sm`;
+                btn.onclick = () => handleSelectAnswer(idx);
+
+                btn.innerHTML = `
+                    <span class="w-6 h-6 rounded-full bg-white font-bold flex items-center justify-center text-xs shrink-0 ${colorStyle.text} border border-gray-200 shadow-xs">
+                        ${idx + 1}
+                    </span>
+                    <span class="font-bold text-gray-800 text-sm sm:text-base pt-0.5 leading-snug">
+                        ${escapeHtml(choice.text)}
+                    </span>
+                `;
+                choicesContainer.appendChild(btn);
+            });
+
+            // Hide Feedback Card
+            document.getElementById('feedback-card').classList.add('hidden');
+        }
+
+        function handleSelectAnswer(choiceIdx) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = quizData[currentIdx];
+            const selected = q.choices[choiceIdx];
+            const feedbackCard = document.getElementById('feedback-card');
+
+            // Answer Logic
+            if (selected.isCorrect) {
+                score += 25;
+                document.getElementById('score-badge').innerText = `⭐ 점수: ${score}점`;
+                document.getElementById('feedback-icon').innerText = '🎉';
+                document.getElementById('feedback-status').innerText = '정답입니다! 아주 훌륭해요!';
+                document.getElementById('feedback-status').className = 'text-lg font-extrabold text-candy-green';
+                feedbackCard.className = 'mt-5 p-5 rounded-2xl border-2 border-candy-green/40 bg-candy-lightgreen/20 animate-pop-in';
+            } else {
+                wrongTags.push(q.id);
+                document.getElementById('feedback-icon').innerText = '💡';
+                document.getElementById('feedback-status').innerText = '아쉬워요! 오개념을 바로잡아 볼까요?';
+                document.getElementById('feedback-status').className = 'text-lg font-extrabold text-candy-pink';
+                feedbackCard.className = 'mt-5 p-5 rounded-2xl border-2 border-candy-pink/40 bg-candy-lightpink/20 animate-pop-in';
+            }
+
+            // Fill Table
+            document.getElementById('tbl-choice').innerText = `${choiceIdx + 1}번: ${selected.text}`;
+            document.getElementById('tbl-thought').innerText = selected.thought;
+            document.getElementById('tbl-correct').innerText = selected.fix;
+
+            // Show Feedback
+            feedbackCard.classList.remove('hidden');
+
+            // Scroll Smoothly to Feedback
+            feedbackCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            currentIdx++;
+            if (currentIdx < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('result-container').classList.remove('hidden');
+
+            // Update Progress Bar to 100%
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('progress-text').innerText = `미션 완료`;
+            document.getElementById('progress-percent').innerText = `100%`;
+
+            document.getElementById('final-score').innerText = `${score}점`;
+
+            // Diagnostic feedback based on incorrect answers
+            const diagText = document.getElementById('diagnostic-text');
+            if (score === 100) {
+                diagText.innerHTML = "<b>축하합니다! ✨</b> 파이썬의 기본 자료형(정수, 실수, 문자열, 불리언)과 연산 규칙을 Perfect하게 이해하셨습니다!";
+            } else {
+                let report = "<b>맞춤형 복습 가이드 📌</b><br><ul class='list-disc list-inside mt-2 space-y-1'>";
+                if (wrongTags.includes(1)) {
+                    report += "<li><b>따옴표와 문자열:</b> 따옴표속 숫자는 <code>str</code>(문자열)이며, <code>+</code>는 문자를 이어붙입니다.</li>";
+                }
+                if (wrongTags.includes(2)) {
+                    report += "<li><b>실수와 정수 구분:</b> 소수점(<code>.</code>)이 붙어 있으면 값이 3.0이라도 파이썬은 <code>float</code>(실수)로 다룹니다.</li>";
+                }
+                if (wrongTags.includes(3)) {
+                    report += "<li><b>불리언 타입:</b> <code>True</code>/<code>False</code>는 단순 글자가 아닌 참/거짓을 나타내는 <code>bool</code> 타입입니다.</li>";
+                }
+                if (wrongTags.includes(4)) {
+                    report += "<li><b>문자열 곱셈:</b> <code>문자열 * 숫자</code>는 문자열을 그 횟수만큼 반복 복제합니다.</li>";
+                }
+                report += "</ul>";
+                diagText.innerHTML = report;
+            }
+        }
+
+        function restartQuiz() {
+            currentIdx = 0;
+            score = 0;
+            wrongTags = [];
+            document.getElementById('score-badge').innerText = `⭐ 점수: 0점`;
+            document.getElementById('result-container').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // Helper for escaping HTML strings
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+
+        // Initialize App on Load
+        window.onload = function() {
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
